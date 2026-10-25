@@ -46,6 +46,7 @@ class CommandTests(unittest.TestCase):
             "psql <<SQL\nDROP TABLE users;\nSQL\n",
             "cat <<EOF\n$(rm -rf /tmp/example)\nEOF\n",
             "echo '<<EOF'\nrm -rf /tmp/example",
+            "echo tag#suffix; rm -rf /tmp/example",
         ]
         for command in cases:
             with self.subTest(command=command):

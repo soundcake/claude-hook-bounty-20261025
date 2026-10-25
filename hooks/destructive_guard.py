@@ -242,7 +242,8 @@ def blocked_reason(command, depth=0):
     if depth > 20:
         return "Command nesting exceeds the guard's inspection limit."
     command, documents = separate_heredocs(command)
-    expanded_text = without_comments(command) + "".join(body for _, body, quoted in documents if not quoted)
+    command = without_comments(command)
+    expanded_text = command + "".join(body for _, body, quoted in documents if not quoted)
     for nested in substitutions(expanded_text):
         reason = blocked_reason(nested, depth + 1)
         if reason:
@@ -251,6 +252,7 @@ def blocked_reason(command, depth=0):
     lexer = shlex.shlex(command.replace("\\\n", ""), posix=True, punctuation_chars=";&|()\n")
     lexer.whitespace = " \t\r"
     lexer.whitespace_split = True
+    lexer.commenters = ""  # Bash only starts comments at a word boundary.
     segments, segment = [], []
     try:
         for token in lexer:
